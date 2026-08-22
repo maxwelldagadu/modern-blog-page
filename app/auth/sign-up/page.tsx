@@ -25,7 +25,7 @@ export default function SignUp() {
 
 
   async function handleOnSubmit(data: z.infer<typeof SignUpSchema>){
-    console.log(data)
+    //console.log(data)
     await authClient.signUp.email({
       email: data.email,
       name: data.name,
