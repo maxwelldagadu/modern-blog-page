@@ -7,11 +7,15 @@ import {useForm,Controller} from 'react-hook-form'
 import { FieldGroup,FieldError, FieldLabel,Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import z from 'zod';
+import { authClient } from "@/lib/auth-client";
 
 
 export default function SignUp() {
+
   const hookForm = useForm({
     resolver: zodResolver(SignUpSchema),
+    mode: 'onChange',
     defaultValues: {
       name:'',
       email:'',
@@ -20,8 +24,13 @@ export default function SignUp() {
   });
 
 
-  function handleOnSubmit(){
-    console.log('awww mayne');
+  async function handleOnSubmit(data: z.infer<typeof SignUpSchema>){
+    console.log(data)
+    await authClient.signUp.email({
+      email: data.email,
+      name: data.name,
+      password: data.password
+    })
   }
 
   return (
@@ -39,7 +48,7 @@ export default function SignUp() {
             <Controller 
               name='name'
               control={hookForm.control}
-              render={({field,fieldState}) =>(
+              render={({field,fieldState}) => (
                 <Field>
                   <FieldLabel htmlFor="name">FullName</FieldLabel>
                   <Input 
@@ -47,7 +56,7 @@ export default function SignUp() {
                     id="name" 
                     placeholder="John Salivan" 
                     autoComplete="name" {...field}/>
-                  {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
+                    {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
                 </Field>
               )}
             />
@@ -62,7 +71,7 @@ export default function SignUp() {
                     aria-invalid={fieldState.invalid} 
                     id="email" placeholder="johnsalivan@gmail.com" 
                     autoComplete="email" {...field}/>
-                  {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
+                    {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
                 </Field>
               )}
             />
@@ -79,12 +88,12 @@ export default function SignUp() {
                     type="password" 
                     autoComplete="current-password"
                     aria-invalid={fieldState.invalid} {...field}/>
-                  {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
+                    {fieldState.invalid && (<FieldError errors={[fieldState.error]}/>)}
                 </Field>
               )}
             />
 
-            <Button className="cursor-pointer">Sign Up</Button>
+            <Button type='submit' className="cursor-pointer">Sign Up</Button>
           </FieldGroup>
         </form>
         </CardContent>
