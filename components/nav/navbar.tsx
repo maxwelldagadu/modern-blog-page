@@ -5,6 +5,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { DarkModeToggle } from '@/components/dark-mode/toggle-dark-mode';
 import { useConvexAuth } from 'convex/react';
 import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 
 export function Navbar() {
@@ -29,7 +30,17 @@ export function Navbar() {
       <div className="flex items-center gap-10 justify-between">
         {isLoading ? null : 
           isAuthenticated ? 
-          <Button onClick={() => authClient.signOut()} className={`${buttonVariants()} cursor-pointer`}>Log Out</Button> :
+          <Button onClick={() => authClient.signOut({
+            // Implementing toast message on screen on logout
+            fetchOptions:{
+              onError: (error) => {
+                toast.error(error.error.message)
+              },
+              onSuccess: () => {
+                toast.success('Logged out succefully')
+              }
+            }
+          })} className={`${buttonVariants()} cursor-pointer`}>Log Out</Button> :
           (
             <>
               <Link href='/auth/sign-up' className={buttonVariants()}>Sign Up</Link>
