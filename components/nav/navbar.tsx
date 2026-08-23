@@ -6,12 +6,17 @@ import { DarkModeToggle } from '@/components/dark-mode/toggle-dark-mode';
 import { useConvexAuth } from 'convex/react';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+
 
 
 export function Navbar() {
 
   // Convex user session authentication
   const {isAuthenticated,isLoading} = useConvexAuth();
+
+  // Using the router to navigate back to home
+  const router = useRouter();
 
   return (
     <nav className="w-full py-5 flex items-center justify-between gap-8">
@@ -32,14 +37,18 @@ export function Navbar() {
           isAuthenticated ? 
           <Button onClick={() => authClient.signOut({
             // Implementing toast message on screen on logout
-            fetchOptions:{
+            fetchOptions: {
               onError: (error) => {
                 toast.error(error.error.message)
               },
               onSuccess: () => {
-                toast.success('Logged out succefully')
+                toast.success('Logged out succefully');
+
+                // Redirecting the user to the home page
+                router.replace('/');
               }
             }
+
           })} className={`${buttonVariants()} cursor-pointer`}>Log Out</Button> :
           (
             <>
