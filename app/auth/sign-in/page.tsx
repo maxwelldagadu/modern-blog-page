@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import z from 'zod';
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 
@@ -33,14 +33,13 @@ export default function SignIn() {
     await authClient.signIn.email({
       email: data.email,
       password: data.password,
-
       // Implementing toast message on screen on logout
       fetchOptions: {
         onError: (error) => {
           toast.error(error.error.message)
         },
         onSuccess: () => {
-          toast.success('Welcome back');
+          toast.success('Logged in successfully');
 
           // Redirecting the user to the home page
           router.replace('/');
