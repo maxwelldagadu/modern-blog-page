@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import z from 'zod';
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from 'next/router';
+import { toast } from 'sonner';
+
 
 export default function SignIn() {
 
@@ -22,11 +25,27 @@ export default function SignIn() {
     }
   });
 
+  // Using the router to navigate back to home
+  const router = useRouter();
+
   // submit handler function
   async function handleOnSubmit(data:z.infer<typeof signInSchema>){
     await authClient.signIn.email({
       email: data.email,
-      password: data.password
+      password: data.password,
+
+      // Implementing toast message on screen on logout
+      fetchOptions: {
+        onError: (error) => {
+          toast.error(error.error.message)
+        },
+        onSuccess: () => {
+          toast.success('Welcome back');
+
+          // Redirecting the user to the home page
+          router.replace('/');
+        }
+      }   
     });
   };
       

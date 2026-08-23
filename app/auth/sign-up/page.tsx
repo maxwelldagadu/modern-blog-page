@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import z from 'zod';
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 
 export default function SignUp() {
@@ -23,6 +24,8 @@ export default function SignUp() {
     }
   });
 
+  // Using the router to navigate back to home
+  const router = useRouter();
 
   async function handleOnSubmit(data: z.infer<typeof signUpSchema>){
     //console.log(data)
