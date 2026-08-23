@@ -11,9 +11,11 @@ import z from 'zod';
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import { useTransition } from "react";
+import {Loader2} from 'lucide-react';
 
 export default function SignUp() {
+  const [isPending,setTransition] = useTransition();
 
   const hookForm = useForm({
     resolver: zodResolver(signUpSchema),
@@ -28,9 +30,10 @@ export default function SignUp() {
   // Using the router to navigate back to home
   const router = useRouter();
 
-  async function handleOnSubmit(data: z.infer<typeof signUpSchema>){
-    //console.log(data)
-    await authClient.signUp.email({
+function handleOnSubmit(data: z.infer<typeof signUpSchema>){
+    setTransition(async() => {
+      //console.log(data)
+      await authClient.signUp.email({
       email: data.email,
       name: data.name,
       password: data.password,
@@ -46,6 +49,8 @@ export default function SignUp() {
           router.replace('/');
         }
       }
+    })
+
     })
   }
 
@@ -108,7 +113,19 @@ export default function SignUp() {
             )}
           />
 
-          <Button type='submit' className="cursor-pointer">Sign Up</Button>
+          <Button type='submit' 
+            className="cursor-pointer" 
+            disabled={isPending}>
+            {
+              isPending ? 
+              <>
+                <Loader2 className='size-4 animate-spin'/>
+                <span>Signing Up...</span>
+              </>
+              :
+              <span>Sign Up</span>
+            }
+          </Button>
         </FieldGroup>
       </form>
       </CardContent>

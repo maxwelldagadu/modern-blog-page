@@ -12,9 +12,12 @@ import z from 'zod';
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTransition } from "react";
+import {Loader2} from 'lucide-react';
 
 
 export default function SignIn() {
+  const [isPending,setTransition] = useTransition();
 
   const hookForm = useForm({
     resolver: zodResolver(signInSchema),
@@ -30,7 +33,8 @@ export default function SignIn() {
 
   // submit handler function
   async function handleOnSubmit(data:z.infer<typeof signInSchema>){
-    await authClient.signIn.email({
+    setTransition(async() => {
+      await authClient.signIn.email({
       email: data.email,
       password: data.password,
       // Implementing toast message on screen on logout
@@ -46,6 +50,7 @@ export default function SignIn() {
         }
       }   
     });
+    })
   };
       
   return (
@@ -90,8 +95,21 @@ export default function SignIn() {
                 </Field>
               )}
             />
-
-              <Button type='submit' className="cursor-pointer">Log In</Button>
+              <Button 
+                type='submit' 
+                className="cursor-pointer"
+                disabled={isPending}
+              >
+                {
+                  isPending ? 
+                  <>
+                    <Loader2 className='size-4 animate-spin'/>
+                    <span>Signing In...</span>
+                  </>
+                  :
+                  <span>Sign In</span>
+                }
+              </Button>
           </FieldGroup>
         </form>
       </CardContent>
