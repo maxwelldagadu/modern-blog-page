@@ -5,7 +5,7 @@ import { authComponent } from "./auth";
 
 // Sending a blog post into the convex database
 
-export const  CreateBlog = mutation({
+export const CreateBlog = mutation({
   args: {title: v.string(), body: v.string()},
   handler: async (ctx,args) => {
     const user = await authComponent.safeGetAuthUser(ctx);

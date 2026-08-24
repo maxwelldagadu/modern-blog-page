@@ -12,28 +12,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@base-ui/react/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useTransition } from "react";
-
-
+import { Loader2 } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 
 
 export default function CreateRoute(){
 
-  const [isPending,setTransition] = useTransition();
+  const [isPending,startTransition] = useTransition();
+  const createUserBlog = useMutation(api.blogs.CreateBlog);
+  const router = useRouter();
 
-  // function handleOnSubmit (data : z.infer<typeof blogSchema>){
-  //   setTransition(async() => {
-      
-  //   })
-  // }
+  function handleOnSubmit (data : z.infer<typeof blogSchema>){
+    startTransition(async() => {
+      await createUserBlog(data);
+      toast.success('Blog Created Successfully');
+      router.replace('/');
+    })
+  }
 
   const hookForm = useForm({
     resolver: zodResolver(blogSchema),
-    mode: 'onChange',
     defaultValues:{
       title: '',
-      content: ''
+      body: ''
     }
   });
 
@@ -55,7 +61,7 @@ export default function CreateRoute(){
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={() => hookForm.handleSubmit(handleOnSubmit)}>
+            <form onSubmit={hookForm.handleSubmit(handleOnSubmit)}>
               <FieldGroup>
                 <Controller
                   name='title'
@@ -73,7 +79,7 @@ export default function CreateRoute(){
                 />
 
                 <Controller
-                  name='content'
+                  name='body'
                   control={hookForm.control} 
                   render={({field,fieldState}) => (
                     <Field>
@@ -87,8 +93,18 @@ export default function CreateRoute(){
                   )}
                 />
 
-                <Button type="submit" className={`${buttonVariants()} cursor-pointer`}>
-                  Create Blog
+                <Button 
+                  disabled={isPending} 
+                  type="submit" 
+                  className={`${buttonVariants()} cursor-pointer`}>
+                  { 
+                    isPending ? 
+                    <>
+                      <Loader2 className="size-4 animate-spin"/>
+                      <span>Creating Blog</span>
+                    </> :
+                    "Create Blog"
+                  }
                 </Button>
 
               </FieldGroup>
