@@ -5,15 +5,15 @@ import { ThemeProvider } from "@/components/ui/toggle-themes/themes";
 import { ConvexClientProvider } from "@/components/convex/convex-client-provider";
 import { Toaster } from "@/components/ui/sonner";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">
+      <body className={`min-h-full ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,7 +35,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </ConvexClientProvider>
           <Toaster closeButton/>
         </ThemeProvider>
-         
       </body>
     </html>
   );

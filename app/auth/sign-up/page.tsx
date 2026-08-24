@@ -120,7 +120,7 @@ function handleOnSubmit(data: z.infer<typeof signUpSchema>){
               isPending ? 
               <>
                 <Loader2 className='size-4 animate-spin'/>
-                <span>Signing Up...</span>
+                <span>Signing Up</span>
               </>
               :
               <span>Sign Up</span>

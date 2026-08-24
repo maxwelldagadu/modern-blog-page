@@ -104,7 +104,7 @@ export default function SignIn() {
                   isPending ? 
                   <>
                     <Loader2 className='size-4 animate-spin'/>
-                    <span>Signing In...</span>
+                    <span>Signing In</span>
                   </>
                   :
                   <span>Sign In</span>
