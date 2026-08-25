@@ -1,22 +1,31 @@
-"use server";
+// "use server";
 
-import { blogSchema } from "@/schemas/blog";
-import z from 'zod';
-import { fetchAuthMutation } from "@/lib/auth-server";
-import { api } from "@/convex/_generated/api";
-import { redirect, RedirectType } from "next/navigation";
+// import { fetchAuthMutation } from "@/lib/auth-server"
 
 
+/* 
+  The auth (token) isn't passed to the server fro authentication when
+  we use the fetchAuthMutation method to crate the blogSchema.
+  useMutation however works fine 
+*/
 
-export async function CreateBlogPost(data : z.infer<typeof blogSchema>) {
-  const validateData = blogSchema.safeParse(data);
+// import { blogSchema } from "@/schemas/blog";
+// import z from 'zod';
+// import { fetchAuthMutation } from "@/lib/auth-server";
+// import { api } from "@/convex/_generated/api";
+// import { redirect, RedirectType } from "next/navigation";
 
-  if(!validateData.success) throw new Error ("Blog creation data validation failed");
 
-  // fecthAuthMutation auto passes the user token for authentication
-  await fetchAuthMutation(api.blogs.CreateBlog,
-    {title: validateData.data.title,body: validateData.data.body});
+
+// export async function CreateBlogPost(data : z.infer<typeof blogSchema>) {
+//   const validateData = blogSchema.safeParse(data);
+
+//   if(!validateData.success) throw new Error ("Blog creation data validation failed");
+
+//   // fecthAuthMutation auto passes the user token for authentication
+//   await fetchAuthMutation(api.blogs.CreateBlog,
+//     {title: validateData.data.title,body: validateData.data.body});
   
-  // Redirecting the user back to home
-  redirect('/',RedirectType.replace);
-}
+//   // Redirecting the user back to home
+//   redirect('/',RedirectType.replace);
+// }

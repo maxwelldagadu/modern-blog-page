@@ -14,7 +14,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { CreateBlogPost } from "@/app/action";
+//import { CreateBlogPost } from "@/app/action";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 
 
@@ -22,11 +25,14 @@ import { CreateBlogPost } from "@/app/action";
 export default function CreateRoute(){
 
   const [isPending,startTransition] = useTransition();
+  const createUserBlog = useMutation(api.blogs.CreateBlog)
+  const route = useRouter();
 
   function handleOnSubmit (data : z.infer<typeof blogSchema>){
     startTransition(async() => {
-      await CreateBlogPost(data);
+      await createUserBlog(data);
       toast.success('Blog Created Successfully');
+      route.replace('/');
     })
   }
 

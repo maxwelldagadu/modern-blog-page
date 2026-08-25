@@ -9,7 +9,7 @@ export const CreateBlog = mutation({
   args: {title: v.string(), body: v.string()},
   handler: async (ctx,args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
-    
+  
     if(!user) throw new ConvexError("You're not authenticated");
 
     const blog = await ctx.db.insert('blogs',{title:args.title,body:args.body,author: user._id});
