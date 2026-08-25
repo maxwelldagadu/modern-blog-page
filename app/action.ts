@@ -2,7 +2,7 @@
 
 import { blogSchema } from "@/schemas/blog";
 import z from 'zod';
-import { fetchMutation } from "convex/nextjs";
+import { fetchAuthMutation } from "@/lib/auth-server";
 import { api } from "@/convex/_generated/api";
 import { redirect, RedirectType } from "next/navigation";
 
@@ -13,7 +13,8 @@ export async function CreateBlogPost(data : z.infer<typeof blogSchema>) {
 
   if(!validateData.success) throw new Error ("Blog creation data validation failed");
 
-  await fetchMutation(api.blogs.CreateBlog,
+  // fecthAuthMutation auto passes the user token for authentication
+  await fetchAuthMutation(api.blogs.CreateBlog,
     {title: validateData.data.title,body: validateData.data.body});
   
   // Redirecting the user back to home
