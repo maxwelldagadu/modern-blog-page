@@ -8,6 +8,7 @@ export default defineSchema(({
   blogs: defineTable({
     title: v.string(),
     body: v.string(),
-    author: v.string()
+    author: v.string(),
+    storageId: v.optional(v.id('_storage'))
   })
 }))

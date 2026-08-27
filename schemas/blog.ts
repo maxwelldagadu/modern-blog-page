@@ -5,5 +5,6 @@ export const blogSchema = z.object({
     .max(50,'Cannot be greater than 50 characters'),
   body: z.string()
     .min(15,'Must be greater than 15 characters')
-    .max(1000,'Cannot be greater than 50 characters')
+    .max(1000,'Cannot be greater than 50 characters'),
+  image: z.instanceof(File)
 })

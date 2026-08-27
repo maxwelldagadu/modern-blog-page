@@ -80,7 +80,7 @@ async function LoadBlog(){
 function BlogSkeleton(){
   return(
     <div className="grid p-6 gap-x-5 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
-      {Array(6).fill('blog').map((_,i) => (
+      {Array(6).fill('').map((_,i) => (
         <div className="flex flex-col space-y-3" key={i}>
           <Skeleton className="h-52 w-full rounded-2xl"/>
           <div className="flex space-y-2 flex-col w-full">

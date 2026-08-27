@@ -40,7 +40,8 @@ export default function CreateRoute(){
     resolver: zodResolver(blogSchema),
     defaultValues:{
       title: '',
-      body: ''
+      body: '',
+      image: undefined
     }
   });
 
