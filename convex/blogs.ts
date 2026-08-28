@@ -32,7 +32,14 @@ export const getBlogs = query({
 
   handler: async (ctx,_) => {
     const blogs = await ctx.db.query('blogs').order('desc').collect();
-    return blogs;
+
+    return await Promise.all(
+      blogs.map(async(blog) => {
+        const imageURL = blog.storageId ? await ctx.storage.getUrl(blog.storageId) : null;
+
+        return {...blog,imageURL}
+      })
+    )
   }
 })
 

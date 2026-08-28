@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         port: '',
         search: '',
       },
+      {
+        protocol: 'https',
+        hostname: "insightful-seal-491.convex.cloud",
+        port: ''
+      }
     ],
   }
 };

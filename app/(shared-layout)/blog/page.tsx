@@ -45,7 +45,7 @@ async function LoadBlog(){
         return (
           <Card key={blog._id} className="py-0">
             <div className="relative h-50 w-full">
-              <Image src='https://cdn.britannica.com/22/19222-050-2267F357/Bob-Marley.jpg'
+              <Image src={blog.imageURL ?? 'https://cdn.britannica.com/22/19222-050-2267F357/Bob-Marley.jpg'}
                 fill 
                 alt="Bob Marley"
                 className="object-cover rounded-t-lg"
