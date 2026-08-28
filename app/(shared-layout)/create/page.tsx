@@ -21,23 +21,47 @@ import { useRouter } from "next/navigation";
 
 
 
-
 export default function CreateRoute(){
 
-  const [isPending,startTransition] = useTransition();
-  const createUserBlog = useMutation(api.blogs.CreateBlog)
+  const [isPending,setTransition] = useTransition();
+  const createUserBlog = useMutation(api.blogs.CreateBlog);
+  const getStorageId = useMutation(api.blogs.generateFileStorageId);
   const route = useRouter();
 
   function handleOnSubmit (data : z.infer<typeof blogSchema>){
-    startTransition(async() => {
-      await createUserBlog(data);
-      toast.success('Blog Created Successfully');
+    setTransition(async() => {
+      
+      const parse = blogSchema.safeParse(data);
+
+      const uploadURL = await getStorageId();
+      
+      try{
+        const response = await fetch(uploadURL,{
+          method: 'POST',
+          headers:{
+            'Content-Type': parse.data?.image.type || 'image/jpeg'
+          },
+          body: parse.data?.image
+        });
+       
+        if(!response.ok) throw new Error("Cannot upload Image. Check it's of the right type");
+
+        const imageURL = await response.json();
+
+        await createUserBlog({title:data.title,body:data.body,storageId:imageURL.storageId});
+        toast.success('Blog Created Successfully');
+      }
+      catch(error){
+        console.log(error instanceof Error ? error.message : 'An unexpected error occurred');
+      }
+      
       route.replace('/');
     })
   }
 
   const hookForm = useForm({
     resolver: zodResolver(blogSchema),
+    mode: 'onChange',
     defaultValues:{
       title: '',
       body: '',
@@ -71,9 +95,10 @@ export default function CreateRoute(){
                   render={({field,fieldState}) => (
                     <Field>
                       <FieldLabel>Title</FieldLabel>
-                      <Input {...field}  
+                      <Input {...field} 
                         aria-invalid={fieldState.invalid}
-                        placeholder="What are fast cars?"
+                        placeholder="What really are fansy cars?"
+                        arial-invalid={fieldState.error}
                       />
                       {fieldState.error && <FieldError errors={[fieldState.error]}/>}
                     </Field>
@@ -88,6 +113,26 @@ export default function CreateRoute(){
                       <FieldLabel>Blog Content</FieldLabel>
                       <Textarea {...field} 
                         placeholder="Ever wonder how amazing it be to own a fast car?" 
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.error && <FieldError errors={[fieldState.error]}/>}
+                    </Field>
+                  )}
+                />
+
+                <Controller
+                  name='image'
+                  control={hookForm.control} 
+                  render={({field,fieldState}) => (
+                    <Field>
+                      <FieldLabel>Image</FieldLabel>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          field.onChange(file);
+                        }} 
                         aria-invalid={fieldState.invalid}
                       />
                       {fieldState.error && <FieldError errors={[fieldState.error]}/>}

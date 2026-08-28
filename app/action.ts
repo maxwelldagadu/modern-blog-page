@@ -1,6 +1,7 @@
-// "use server";
+"use server";
 
-// import { fetchAuthMutation } from "@/lib/auth-server"
+// import { api } from "@/convex/_generated/api";
+// import { fetchMutation } from "convex/nextjs";
 
 
 /* 
@@ -28,4 +29,4 @@
   
 //   // Redirecting the user back to home
 //   redirect('/',RedirectType.replace);
-// }
+ 

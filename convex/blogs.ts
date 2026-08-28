@@ -7,13 +7,18 @@ import { query } from "./_generated/server";
 // Sending a blog post into the convex database
 
 export const CreateBlog = mutation({
-  args: {title: v.string(), body: v.string(),storage: v.optional(v.id('_storage'))},
+  args: {title: v.string(), body: v.string(),storageId: v.optional(v.id('_storage'))},
   handler: async (ctx,args) => {
     const user = await authComponent.safeGetAuthUser(ctx);
   
-    if(!user) throw new ConvexError("You're not authenticated");
-
-    const blog = await ctx.db.insert('blogs',{title:args.title,body:args.body,author: user._id});
+    if(!user) throw new ConvexError ("You're not authenticated");
+    
+    const blog = await ctx.db.insert('blogs',{
+      title:args.title,
+      body:args.body,
+      author: user._id,
+      storageId: args.storageId
+    });
 
     return blog;
   }
@@ -39,8 +44,9 @@ export const generateFileStorageId = mutation({
   handler: async(ctx) => {
     const user = await authComponent.safeGetAuthUser(ctx);
   
-    if(!user) throw new ConvexError("You're not authenticated");
+    if(!user) throw new ConvexError ("You're not authenticated");
 
-    return await ctx.storage.generateUploadUrl();
+    const storageId = await ctx.storage.generateUploadUrl();
+    return storageId;
   }
 })
