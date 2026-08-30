@@ -32,7 +32,6 @@ export default async function AllBlogs(){
   )
 } 
 
-
 // Blog loading logic
 
 async function LoadBlog(){
