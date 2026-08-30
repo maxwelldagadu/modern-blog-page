@@ -57,3 +57,21 @@ export const generateFileStorageId = mutation({
     return storageId;
   }
 })
+
+
+// Get blog by id
+
+export const getBlogById = query({
+  args: {postId: v.id('blogs')},
+  handler: async (ctx,args) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+  
+    if(!user) throw new ConvexError ("You're not authenticated");
+
+    const blog = await ctx.db.get(args.postId);
+
+    const getImageURL =  blog?.storageId ? await ctx.storage.getUrl(blog.storageId) : null;
+
+    return {...blog,storageId:getImageURL}; 
+  }
+});

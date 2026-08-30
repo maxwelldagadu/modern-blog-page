@@ -35,7 +35,7 @@ export default async function AllBlogs(){
 
 async function LoadBlog(){
 
-  await new Promise((ressolve) => setTimeout(ressolve,5000));
+  //await new Promise((ressolve) => setTimeout(ressolve,5000));
 
   const data = await fetchQuery(api.blogs.getBlogs);
 
