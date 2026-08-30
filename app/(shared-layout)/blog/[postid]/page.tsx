@@ -22,12 +22,12 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
 
   const {postid} = await params;
   
-  const blog = await fetchQuery(api.blogs.getBlogById,{postId:postid});
+  const blog =  await fetchQuery(api.blogs.getBlogById,{postId:postid});
 
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
   }
-
+  
   return(
     <div className="max-w-5xl relative mx-auto fade-in animate-in py-8 px-4">
       <Suspense fallback={<LoadBlog />}>
