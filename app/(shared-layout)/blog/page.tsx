@@ -7,10 +7,12 @@ import Link from 'next/link'
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cacheTag } from "next/cache";
 
 
 export default async function AllBlogs(){
-  
+  'use cache';
+  cacheTag('allBlogs');
   
   return(
     <div className="py-10 ">
@@ -34,8 +36,8 @@ export default async function AllBlogs(){
 // Blog loading logic
 
 async function LoadBlog(){
-
-  //await new Promise((ressolve) => setTimeout(ressolve,5000));
+  
+  await new Promise((ressolve) => setTimeout(ressolve,5000));
 
   const data = await fetchQuery(api.blogs.getBlogs);
 

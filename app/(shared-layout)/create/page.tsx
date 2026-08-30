@@ -14,7 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-//import { CreateBlogPost } from "@/app/action";
+import { CreateBlog } from "@/app/action";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
@@ -35,26 +35,14 @@ export default function CreateRoute(){
 
       const uploadURL = await getStorageId();
       
-      try{
-        const response = await fetch(uploadURL,{
-          method: 'POST',
-          headers:{
-            'Content-Type': parse.data?.image.type || 'image/jpeg'
-          },
-          body: parse.data?.image
-        });
-       
-        if(!response.ok) throw new Error("Cannot upload Image. Check it's of the right type");
+      const args = {uploadURL,parse,data};
 
-        const imageURL = await response.json();
-
-        await createUserBlog({title:data.title,body:data.body,storageId:imageURL.storageId});
-        toast.success('Blog Created Successfully');
-      }
-      catch(error){
-        console.log(error instanceof Error ? error.message : 'An unexpected error occurred');
-      }
+      const blogData = await CreateBlog(args);
       
+      await createUserBlog(blogData);
+
+      toast.success('Blog Created Successfully');
+
       route.replace('/');
     })
   }
