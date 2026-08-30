@@ -3,9 +3,10 @@ import { query } from "./_generated/server";
 
 
 export const getComments = query({
-  args: v.id('blogs'),
+  args: {postId:v.id('blogs')},
   handler: async (ctx,args) => {
-    const comments = await ctx.db.query('comments').order('desc').collect();
+    const comments = await ctx.db.query('comments')
+    .filter((cmt) => cmt.eq(cmt.field('postId'),args.postId)).order('desc').collect();
     return comments;
   } 
 })

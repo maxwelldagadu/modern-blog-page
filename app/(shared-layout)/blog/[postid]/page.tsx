@@ -24,6 +24,8 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
   
   const blog =  await fetchQuery(api.blogs.getBlogById,{postId:postid});
 
+  const comments = await fetchQuery(api.comments.getComments,{postId:postid});
+
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
   }
