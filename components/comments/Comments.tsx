@@ -1,23 +1,57 @@
 'use client';
 
-
-import { MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { commentsSchema } from "@/schemas/comments";
 import { useTransition } from "react";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@base-ui/react/button";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { useParams } from "next/navigation";
+import { type Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import z from "zod";
+import { toast } from "sonner";
+
 
 export default function CommentSection(){
   const [isPending,setTransition] = useTransition();
 
+  const postId = useParams<{ postid: string }>().postid as Id<'blogs'>;
+  
+  const createCommentMutation = useMutation(api.comments.createComment);
+
+  // Hook form definition
   const hookForm = useForm({
     resolver: zodResolver(commentsSchema),
+    defaultValues:{
+      body: '',
+      postId
+    }
   });
+
+  // Submit handler logic
+  function handleCreateComment({ postId,...data}: z.infer<typeof commentsSchema>): void{
+    setTransition(async() => {
+      try{
+        if(!data.body){
+          toast.error('Comment field cannot be empty');
+          return;
+        }
+
+        await createCommentMutation({...data, postId});
+        hookForm.reset();
+        toast.success('Comment created')
+      }
+      catch(error){
+        toast.error(error instanceof Error ? error.message : null);
+      }
+    })
+  }
   
   return(
    <Card>
@@ -27,7 +61,7 @@ export default function CommentSection(){
     </CardHeader>
 
     <CardContent>
-      <form>
+      <form onSubmit={hookForm.handleSubmit(handleCreateComment)}>
         <FieldGroup>
           <Controller 
             name='body'
@@ -43,7 +77,21 @@ export default function CommentSection(){
               </Field>
             )}
           />
-          <Button className={`${buttonVariants()} px-0 w-[70] self-end cursor-pointer`}>Submit</Button>
+          <Button className={`${buttonVariants()} 
+            px-0 w-40 text-l font-bold self-end cursor-pointer`}
+            disabled={isPending}
+            type="submit"
+          >
+            {
+              isPending ? 
+              <>
+                <Loader2 className='size-4 animate-spin'/>
+                <span>Sending Comment</span>
+              </>
+              :
+              <span>Comment</span>
+            }
+          </Button>
         </FieldGroup>
       </form>
     </CardContent>
