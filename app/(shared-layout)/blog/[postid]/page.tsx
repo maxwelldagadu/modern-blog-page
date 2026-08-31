@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { api } from "@/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { Id } from "@/convex/_generated/dataModel";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +21,10 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
 
   const {postid} = await params;
   
-  const blog =  await fetchQuery(api.blogs.getBlogById,{postId:postid});
+  const [blog,preloadedComments] = await Promise.all([
+    await fetchQuery(api.blogs.getBlogById,{postId:postid}),
+    await preloadQuery(api.comments.getComments,{postId:postid})
+  ]);
 
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
@@ -54,7 +57,7 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
           <Separator className="my-2"/>
       </div>
 
-      <CommentSection/>
+      <CommentSection preloadedComments={preloadedComments}/>
       
     </div>
   )

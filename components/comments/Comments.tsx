@@ -12,19 +12,23 @@ import { Button } from "@base-ui/react/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { type Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { Preloaded, useMutation, usePreloadedQuery, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import z from "zod";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 
-export default function CommentSection(){
+export default function CommentSection(props: {preloadedComments: 
+  Preloaded<typeof api.comments.getComments>}){
+
   const [isPending,setTransition] = useTransition();
 
   const postId = useParams<{ postid: string }>().postid as Id<'blogs'>;
 
-  const comments = useQuery(api.comments.getComments,{postId});
+  //const comments = useQuery(api.comments.getComments,{postId});
+
+  const comments = usePreloadedQuery(props.preloadedComments);
 
   const createCommentMutation = useMutation(api.comments.createComment);
 
