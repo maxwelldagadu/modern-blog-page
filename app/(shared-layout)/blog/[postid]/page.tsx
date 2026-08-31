@@ -1,5 +1,3 @@
-
-
 import { buttonVariants } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -25,8 +23,6 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
   
   const blog =  await fetchQuery(api.blogs.getBlogById,{postId:postid});
 
-  const comments = await fetchQuery(api.comments.getComments,{postId:postid});
-
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
   }
@@ -49,7 +45,7 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
           {blog.title}
         </h2>
         <span className="text-l font-light text-muted-foreground">
-          Created at: {new Date(Number(blog._creationTime)).toDateString()}
+          Created: {new Date(Number(blog._creationTime)).toDateString()}
         </span>
         <Separator className="my-2"/>
         <p className="text-l font-medium text-foreground/90 whitespace-pre-wrap">
@@ -57,7 +53,9 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
         </p>
           <Separator className="my-2"/>
       </div>
+
       <CommentSection/>
+      
     </div>
   )
 }

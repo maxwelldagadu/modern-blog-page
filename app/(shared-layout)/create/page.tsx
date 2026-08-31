@@ -28,6 +28,18 @@ export default function CreateRoute(){
   const getStorageId = useMutation(api.blogs.generateFileStorageId);
   const route = useRouter();
 
+
+  const hookForm = useForm({
+    resolver: zodResolver(blogSchema),
+    mode: 'onChange',
+    defaultValues:{
+      title: '',
+      body: '',
+      image: undefined
+    }
+  });
+
+
   function handleOnSubmit (data : z.infer<typeof blogSchema>){
     setTransition(async() => {
       
@@ -43,19 +55,11 @@ export default function CreateRoute(){
 
       toast.success('Blog Created Successfully');
 
+      hookForm.reset();
+      
       route.replace('/');
     })
   }
-
-  const hookForm = useForm({
-    resolver: zodResolver(blogSchema),
-    mode: 'onChange',
-    defaultValues:{
-      title: '',
-      body: '',
-      image: undefined
-    }
-  });
 
 
   return(

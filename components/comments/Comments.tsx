@@ -12,17 +12,20 @@ import { Button } from "@base-ui/react/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { type Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import z from "zod";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 
 export default function CommentSection(){
   const [isPending,setTransition] = useTransition();
 
   const postId = useParams<{ postid: string }>().postid as Id<'blogs'>;
-  
+
+  const comments = useQuery(api.comments.getComments,{postId});
+
   const createCommentMutation = useMutation(api.comments.createComment);
 
   // Hook form definition
@@ -54,10 +57,10 @@ export default function CommentSection(){
   }
   
   return(
-   <Card>
-    <CardHeader className="flex space-x-1.5">
+   <Card className="gap-y-8">
+    <CardHeader className="flex space-x-1.5 items-center">
       <MessageSquare className="size-4"/>
-      <span className="text-sm sm:text-l font-bold">10 comments</span>
+      <span className="text-sm sm:text-l font-bold">{comments?.length} Comments</span>
     </CardHeader>
 
     <CardContent>
@@ -94,7 +97,43 @@ export default function CommentSection(){
           </Button>
         </FieldGroup>
       </form>
+  
     </CardContent>
+
+    <div className="flex gap-5 flex-col">
+      {comments?.map(comment => {
+       return(
+        <div key={comment._id}  className="flex gap-3 items-center">
+          <Avatar>
+            <AvatarImage
+              src={`https://avatar.vercel.sh/${comment.authorName}?size=300`}
+              alt='user'
+            />  
+            <AvatarFallback>
+              {comment.authorName.slice(0,2).toLocaleUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="w-full flex flex-col gap-0.5">
+            <div className="flex items-center justify-between">
+              <span className="text-l font-medium">
+                {comment.authorName}
+              </span>
+              <span className="text-muted-foreground">
+                {new Date(Number(comment._creationTime)).toLocaleDateString()}
+              </span>
+            </div>
+            <div>
+            <p className="text-sm sm:text-l text-muted-foreground/90 whitespace-pre-wrap
+              leading-5
+            ">
+              {comment.body}
+            </p>
+            </div>
+          </div>
+        </div>
+       )
+      })}
+    </div>
    </Card>
   )
 }
