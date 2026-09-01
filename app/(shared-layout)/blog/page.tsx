@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   description: 'All user blogs',
   
 }
- 
 
 
 export default async function AllBlogs(){

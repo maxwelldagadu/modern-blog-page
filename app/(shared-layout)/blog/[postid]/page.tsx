@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import CommentSection from "@/components/comments/Comments";
+import { Metadata } from "next";
 
 
 interface RoutePostID {
@@ -16,6 +17,22 @@ interface RoutePostID {
 }
 
 export const instant = false;
+
+export async function generateMetadata({params}: {params:Promise<RoutePostID>}): Promise<Metadata>{
+  const {postid} = await params;
+  const blog =  await fetchQuery(api.blogs.getBlogById,{postId:postid});
+
+  if(!blog){
+    return {
+      title: 'Blog not found'
+    }
+  }
+
+  return {
+    title: `Blog | ${blog.title}`,
+    description: blog.body?.substring(0,30)
+  }
+}
 
 export default async function PostIDRoute({params}:{params : Promise<RoutePostID>}){
 
@@ -25,6 +42,7 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
     await fetchQuery(api.blogs.getBlogById,{postId:postid}),
     await preloadQuery(api.comments.getComments,{postId:postid})
   ]);
+
 
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
