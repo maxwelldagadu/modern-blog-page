@@ -25,7 +25,7 @@ export const CreateBlog = mutation({
 })
 
 
-// Fecthing blogs from the convex db
+// Fetching blogs from the convex db
 
 export const getBlogs = query({
   args: {},

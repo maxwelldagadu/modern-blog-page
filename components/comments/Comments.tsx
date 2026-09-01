@@ -128,7 +128,7 @@ export default function CommentSection(props: {preloadedComments:
             </div>
             <div>
             <p className="text-sm sm:text-l text-muted-foreground/90 whitespace-pre-wrap
-              leading-5
+              leading-4
             ">
               {comment.body}
             </p>

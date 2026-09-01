@@ -8,6 +8,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cacheTag } from "next/cache";
+import { Metadata } from "next";
+
+
+// Medatada for all blogs posts
+export const metadata: Metadata = {
+  title: 'Blogs | Daily',
+  description: 'All user blogs',
+  
+}
+ 
 
 
 export default async function AllBlogs(){

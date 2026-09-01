@@ -30,7 +30,7 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
   }
   
-
+ 
   return(
     <div className="max-w-5xl relative mx-auto fade-in animate-in py-8 px-4">
       <Link href='/blog' className={buttonVariants()}>
