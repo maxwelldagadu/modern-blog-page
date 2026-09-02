@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import CommentSection from "@/components/comments/Comments";
 import { Metadata } from "next";
+import UserPresence from "@/components/comments/UserPresence";
+import { fetchAuthMutation } from "@/lib/auth-server";
 
 
 interface RoutePostID {
@@ -37,12 +39,15 @@ export async function generateMetadata({params}: {params:Promise<RoutePostID>}):
 export default async function PostIDRoute({params}:{params : Promise<RoutePostID>}){
 
   const {postid} = await params;
-  
-  const [blog,preloadedComments] = await Promise.all([
-    await fetchQuery(api.blogs.getBlogById,{postId:postid}),
-    await preloadQuery(api.comments.getComments,{postId:postid})
-  ]);
 
+  //const token = await getToken();
+  
+  const [blog,preloadedComments,userID] = await Promise.all([
+    await fetchQuery(api.blogs.getBlogById,{postId:postid}),
+    await preloadQuery(api.comments.getComments,{postId:postid}),
+    await fetchAuthMutation(api.user.getUserId)
+  ]);
+ 
 
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
@@ -65,10 +70,16 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
         <h2 className='text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground'>
           {blog.title}
         </h2>
-        <span className="text-l font-light text-muted-foreground">
-          Created: {new Date(Number(blog._creationTime)).toDateString()}
-        </span>
+
+        <div className="flex items-center justify-between gap-5">
+          <span className="text-l font-light text-muted-foreground">
+            Created: {new Date(Number(blog._creationTime)).toDateString()}
+          </span>
+          {userID && <UserPresence roomId={postid} userId={userID}/>}
+        </div>
+
         <Separator className="my-2"/>
+
         <p className="text-l font-medium text-foreground/90 whitespace-pre-wrap">
           {blog.body}
         </p>
