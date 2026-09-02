@@ -30,7 +30,7 @@ export async function generateMetadata({params}: {params:Promise<RoutePostID>}):
 
   return {
     title: `Blog | ${blog.title}`,
-    description: blog.body?.substring(0,30)
+    description: blog.body?.substring(0,150)
   }
 }
 
