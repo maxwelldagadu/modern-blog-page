@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { buttonVariants } from "@/components/ui/button";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { Metadata } from "next";
 
 
@@ -20,8 +20,6 @@ export const metadata: Metadata = {
 
 
 export default async function AllBlogs(){
-  'use cache';
-  cacheTag('allBlogs');
   
   return(
     <div className="py-10 ">
@@ -44,7 +42,11 @@ export default async function AllBlogs(){
 // Blog loading logic
 
 async function LoadBlog(){
-  
+
+  'use cache';
+  cacheLife({revalidate: 60});
+  cacheTag('allBlogs');
+
   await new Promise((ressolve) => setTimeout(ressolve,5000));
 
   const data = await fetchQuery(api.blogs.getBlogs);
@@ -92,11 +94,11 @@ function BlogSkeleton(){
     <div className="grid p-6 gap-x-5 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
       {Array(6).fill('').map((_,i) => (
         <div className="flex flex-col space-y-3" key={i}>
-          <Skeleton className="h-52 w-full rounded-2xl"/>
+          <Skeleton className="h-52 w-full rounded-2xl bg-muted/80"/>
           <div className="flex space-y-2 flex-col w-full">
-             <Skeleton className="h-5 w-3/4"/>
-             <Skeleton className="h-5 w-3/4"/>
-             <Skeleton className="h-5 w-2/4"/>
+             <Skeleton className="h-5 w-3/4 bg-muted/80"/>
+             <Skeleton className="h-5 w-3/4 bg-muted/80"/>
+             <Skeleton className="h-5 w-2/4 bg-muted/80"/>
           </div>
         </div>
       ))}

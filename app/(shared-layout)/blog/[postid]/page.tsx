@@ -12,6 +12,7 @@ import CommentSection from "@/components/comments/Comments";
 import { Metadata } from "next";
 import UserPresence from "@/components/comments/UserPresence";
 import { fetchAuthMutation } from "@/lib/auth-server";
+import { connection } from "next/server";
 
 
 interface RoutePostID {
@@ -37,11 +38,12 @@ export async function generateMetadata({params}: {params:Promise<RoutePostID>}):
 }
 
 export default async function PostIDRoute({params}:{params : Promise<RoutePostID>}){
+  await connection();
 
   const {postid} = await params;
 
   //const token = await getToken();
-  
+
   const [blog,preloadedComments,userID] = await Promise.all([
     await fetchQuery(api.blogs.getBlogById,{postId:postid}),
     await preloadQuery(api.comments.getComments,{postId:postid}),
@@ -52,43 +54,43 @@ export default async function PostIDRoute({params}:{params : Promise<RoutePostID
   if(!blog){
     return <h2 className="text-l text-white sm:text-3xl md:text-4xl lg:text-5xl font-bold">No Blog Post</h2>
   }
-  
  
   return(
-    <div className="max-w-5xl relative mx-auto fade-in animate-in py-8 px-4">
-      <Link href='/blog' className={buttonVariants()}>
-        <ArrowLeft/> Back
-      </Link>
-      <Suspense fallback={<LoadBlog/>}>
-        <div className="relative w-full h-100 rounded-2xl p-4 shadow-sm overflow-hidden mb-8 mt-4">
-          <Image fill src={blog?.imageURL ?? 'https://cdn.britannica.com/22/19222-050-2267F357/Bob-Marley.jpg'} 
-            alt='Blog Image'
-            className='object-cover hover:scale-105 transition-transform duration-500'
-          />
-        </div>
-        <div className='w-full flex flex-col gap-2'>
-          <h2 className='text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground'>
-            {blog.title}
-          </h2>
+    <Suspense fallback={<LoadBlog/>}>
+      <div className="max-w-5xl relative mx-auto fade-in animate-in py-8 px-4">
+        <Link href='/blog' className={buttonVariants()}>
+          <ArrowLeft/> Back
+        </Link>
+        
+          <div className="relative w-full h-100 rounded-2xl p-4 shadow-sm overflow-hidden mb-8 mt-4">
+            <Image fill src={blog?.imageURL ?? 'https://cdn.britannica.com/22/19222-050-2267F357/Bob-Marley.jpg'} 
+              alt='Blog Image'
+              className='object-cover hover:scale-105 transition-transform duration-500'
+            />
+          </div>
+          <div className='w-full flex flex-col gap-2'>
+            <h2 className='text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground'>
+              {blog.title}
+            </h2>
 
-          <div className="flex items-center justify-between gap-5">
-            <span className="text-l font-light text-muted-foreground">
-              Created: {new Date(Number(blog._creationTime)).toDateString()}
-            </span>
-            {userID && <UserPresence roomId={postid} userId={userID}/>}
+            <div className="flex items-center justify-between gap-5">
+              <span className="text-l font-light text-muted-foreground">
+                Created: {new Date(Number(blog._creationTime)).toDateString()}
+              </span>
+              {userID && <UserPresence roomId={postid} userId={userID}/>}
+            </div>
+
+            <Separator className="my-2"/>
+
+            <p className="text-l font-medium text-foreground/90 whitespace-pre-wrap">
+              {blog.body}
+            </p>
+              <Separator className="my-2"/>
           </div>
 
-          <Separator className="my-2"/>
-
-          <p className="text-l font-medium text-foreground/90 whitespace-pre-wrap">
-            {blog.body}
-          </p>
-            <Separator className="my-2"/>
-        </div>
-
-        <CommentSection preloadedComments={preloadedComments}/>
-      </Suspense>
-    </div>
+          <CommentSection preloadedComments={preloadedComments}/>
+      </div>
+    </Suspense>
   )  
 }
 
