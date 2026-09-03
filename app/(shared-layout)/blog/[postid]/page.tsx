@@ -12,7 +12,6 @@ import CommentSection from "@/components/comments/Comments";
 import { Metadata } from "next";
 import UserPresence from "@/components/comments/UserPresence";
 import { fetchAuthMutation } from "@/lib/auth-server";
-import { connection } from "next/server";
 
 
 interface RoutePostID {
@@ -38,7 +37,6 @@ export async function generateMetadata({params}: {params:Promise<RoutePostID>}):
 }
 
 export default async function PostIDRoute({params}:{params : Promise<RoutePostID>}){
-  await connection();
 
   const {postid} = await params;
 
