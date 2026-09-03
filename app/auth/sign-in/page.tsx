@@ -95,21 +95,21 @@ export default function SignIn() {
                 </Field>
               )}
             />
-              <Button 
-                type='submit' 
-                className="cursor-pointer"
-                disabled={isPending}
-              >
-                {
-                  isPending ? 
-                  <>
-                    <Loader2 className='size-4 animate-spin'/>
-                    <span>Signing In</span>
-                  </>
-                  :
-                  <span>Sign In</span>
-                }
-              </Button>
+            <Button 
+              type='submit' 
+              className="cursor-pointer"
+              disabled={isPending}
+            >
+              {
+                isPending ? 
+                <>
+                  <Loader2 className='size-4 animate-spin'/>
+                  <span>Signing In</span>
+                </>
+                :
+                <span>Sign In</span>
+              }
+            </Button>
           </FieldGroup>
         </form>
       </CardContent>
